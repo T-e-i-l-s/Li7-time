@@ -1,20 +1,18 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import Page from './navigate'
 
-export default function App() {
+import * as Font from 'expo-font'
+
+//подгружаем шрифты
+Font.loadAsync({
+  'font': require('./assets/fonts/Geologica.ttf'),
+})
+
+export default function App () {
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    <Page/>
+
+  )
+
+}
