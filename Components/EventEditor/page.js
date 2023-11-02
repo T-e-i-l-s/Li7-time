@@ -1,10 +1,10 @@
 
 // requiring libraries
-import React, { useRef, useState } from 'react';
-import { Animated, Text, View, TextInput, FlatList, Image, TouchableHighlight } from 'react-native';
+import React, { useState } from 'react'
+import { Text, View, TextInput, FlatList, Image, TouchableHighlight } from 'react-native'
 import { doc, getDoc, setDoc, updateDoc, deleteField } from 'firebase/firestore/lite'
 // requiring modules
-import styles from './styles';
+import styles from './styles'
 import db from '../../Hooks/initFirebase'
 
 
@@ -26,16 +26,25 @@ export default function App({ route, navigation }) {
 
     });
 
-    return focusHandler;
+    return focusHandler
 
-  }, [navigation]);
+  }, [navigation])
 
 
   const removeItem = (id) => {
     events.splice(id,1) // remove from array
     setReload(reload+1) // rerender flatlist
-  };
+  }
 
+
+  const upload = async () => {
+    // uploading data to firebase
+    let cityRef = await doc(db, 'Li7', 'events');
+    await setDoc(cityRef, { events: events }, { merge: true })
+  }
+
+
+  // rendering
   return (
 
     <View style={styles.container}>
@@ -82,9 +91,8 @@ export default function App({ route, navigation }) {
 
 
       <Text style={[styles.button,{fontWeight: '700'}]} onPress={async () => {
-         // sending data to firebase
-        let cityRef = await doc(db, 'Li7', 'events');
-        await setDoc(cityRef, { events: events }, { merge: true });
+         // uploading data to firebase
+         upload()
         // open administrator page
         navigation.navigate('AdminPanel', param)
       }}>

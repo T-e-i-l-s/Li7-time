@@ -11,6 +11,10 @@ export default async function loadData ({ navigation }) {
     var date = new Date()
     var dayName = week[date.getDay()];
 
+    if ( dayName == week[0] ) {
+      dayName = week[1]
+    }
+
 
     // getting data from firebase
     let docRef = doc(db, 'Li7', dayName) // connecting with firebase

@@ -3,7 +3,7 @@ import Main from './Components/Main/page'
 import CodeInput from './Components/CodeInput/page'
 import AdminPanel from './Components/AdminPanel/page'
 import EventEditor from './Components/EventEditor/page'
-import LessonEditor from './Components/LessonEditor/page'
+import BellEditor from './Components/BellEditor/page'
 import Week from './Components/Week/page'
 import ClassList from './Components/ClassList/page'
 import DayEditor from './Components/DayEditor/page'
@@ -48,8 +48,8 @@ export default function Navigate () {
         initialParams={[]}
       />
       <Stack.Screen
-        name="LessonEditor"
-        component={ LessonEditor }
+        name="BellEditor"
+        component={ BellEditor }
         options={ { headerShown: false, animationTypeForReplace: 'pop' } }
         initialParams={[]}
       />

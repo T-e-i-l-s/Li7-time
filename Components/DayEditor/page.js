@@ -89,14 +89,11 @@ export default function App({ route, navigation }) {
                             onChangeText={(e) => {names[index] = e; setReload(reload+1)}}
                             value={names[index]}/>
 
-                <View style={styles.inputRow}>
-                  <TextInput style={styles.dateInput}
-                              placeholder='Кабинет'
-                              placeholderTextColor={'#5c4644'}
-                              onChangeText={(e) => {rooms[index]= e; setReload(reload+1)}}
-                              value={rooms[index]}
-                              />
-                </View>
+                <TextInput style={styles.dateInput}
+                            placeholder='Кабинет'
+                            placeholderTextColor={'#5c4644'}
+                            onChangeText={(e) => {rooms[index]= e; setReload(reload+1)}}
+                            value={rooms[index]}/>
                 
               </View>
 

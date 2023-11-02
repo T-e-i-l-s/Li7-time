@@ -24,6 +24,7 @@ export default function App({ route, navigation }) {
   }
   
 
+  // rendering
   return (
 
     <View style={styles.container}>

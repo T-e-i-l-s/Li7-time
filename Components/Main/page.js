@@ -264,14 +264,12 @@ export default function App({ route, navigation }) {
 
             {/* events */}
             <Text style={[styles.text,{marginTop: '2%', width: '100%', textAlign: 'center'}]}>
-              Ближайшие события:
+              Ближайшее событие:
             </Text>
             <View>
-              <FlatList scrollEnabled={false} data={events} renderItem={({ item, index }) => (
-                <View style={[styles.eventBlock]}>
-                  <Text style={[styles.eventName,{width: (windowWidth*0.18*0.8), textAlign: 'center'}]}>{"" + (index+1) + "." + (" " + item)}</Text>
-                </View>
-              )}/>
+              <View style={[styles.eventBlock]}>
+                <Text style={[styles.eventName,{width: "100%", textAlign: 'center'}]}>{(events[0])}</Text>
+              </View>
             </View>
           </View>
 

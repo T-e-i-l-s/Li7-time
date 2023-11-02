@@ -1,41 +1,51 @@
-import React, { useRef, useState } from 'react';
-import { Animated, Text, View, TextInput, FlatList, Image, TouchableHighlight } from 'react-native';
+
+// requiring libraries
+import React, { useState } from 'react';
+import { Text, View, TextInput, FlatList, Image, TouchableHighlight } from 'react-native';
+import { doc, getDoc, setDoc, updateDoc, deleteField } from 'firebase/firestore/lite'
+// requiring modules
 import styles from './styles';
 import db from '../../Hooks/initFirebase'
-import { doc, getDoc, setDoc, updateDoc, deleteField } from 'firebase/firestore/lite'
 
-let arr = []
-let arr2 = []
-let week1 = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
-let week2 = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-let arr_len = 0
+
+let classes = [] // list of classes
+let lessons = [] // list of timetables
+let week_ru = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'] // days on Russian
+let week_eng = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] // days on English
+let classes_len = 0 // number of classes
 
 export default function App({ route, navigation }) {
 
-  const param = route.params
-  const [reload, setReload] = useState(0)
+  const param = route.params // navigation data
+
+  const [reload, setReload] = useState(0) // flatlist extraData
 
   
-  React.useEffect(() => { // Хук загрузки данных при переходе на страницу
+  React.useEffect(() => {
 
     const focusHandler = navigation.addListener('focus', async () => {
 
-      arr = []
-      arr2 = []
+      // resetting arrays
+      classes = []
+      lessons = []
 
-      let docRef = doc(db, 'Li7', week2[week1.indexOf(param.day)])//EquipmentButton
+      // getting data from firebase
+      let docRef = doc(db, 'Li7', week_eng[week_ru.indexOf(param.day)])
       let docSnap = await getDoc(docRef)
       let data = docSnap.data()
     
+      // processing data
       Object.keys(data).forEach(e => {
   
-        arr.push(e)
-        arr2.push(data[e])
+        classes.push(e)
+        lessons.push(data[e])
     
       });
 
-      arr_len = arr.length
+      // saving number of classes
+      classes_len = classes.length
 
+      // rerendering flatlist
       setReload(reload+1)
 
     });
@@ -45,44 +55,104 @@ export default function App({ route, navigation }) {
   }, [navigation]);
 
 
+  async function updateClass(e) {
 
+    if ( index < classees_len ) { 
+
+      // updating data at firebase
+
+      let cityRef = await doc(db, 'Li7', week_eng[week_ru.indexOf(param.day)]);
+      await setDoc(cityRef, { [e]: lessons[index] }, { merge: true });
+
+      await updateDoc(cityRef, {
+        [item]: deleteField()
+      });
+
+    }  
+
+    // updating data on page
+    classes[index] = e
+
+    // reloading flatlist
+    setReload(reload+1)
+
+  }
+
+
+  const deleteClass = async (index) => {
+
+    // updating data on page
+    classes.splice(index,1); 
+
+    // reloading flatlist
+    setReload(reload+1);
+
+    // updating data at firebase
+    console.log(week_eng[week_ru.indexOf(param.day)])
+    let cityRef = doc(db, 'Li7', week_eng[week_ru.indexOf(param.day)]);
+    await updateDoc(cityRef, {
+      [item]: deleteField()
+    });
+
+  }
+
+
+  // rendering
   return (
 
     <View style={styles.container}>
 
       <View style={{width: '25%'}}>
-        <FlatList extraData={reload} scrollEnabled={false} data={arr} renderItem={({ item, index }) => (
+
+        <FlatList extraData={reload} scrollEnabled={false} data={classes} renderItem={({ item, index }) => (
+
+          // class block
 
           <View style={styles.button}>
+
+            {/* name input */}
 
             <TextInput style={styles.input}
                         placeholder='Класс'
                         placeholderTextColor={'#EDEDE9'}
                         onChangeText={async (e) => {
+                      
+                          // updating data on page
+                          classes[index] = e
+                      
+                          // reloading flatlist
+                          setReload(reload+1)
 
-                          if ( index < arr_len ) { 
-
-                            let cityRef = await doc(db, 'Li7', week2[week1.indexOf(param.day)]);
-                            await setDoc(cityRef, { [e]: arr2[index] }, { merge: true });
-
+                          if ( index < classes_len ) { 
+                      
+                            // updating data at firebase
+                      
+                            let cityRef = await doc(db, 'Li7', week_eng[week_ru.indexOf(param.day)]);
+                            await setDoc(cityRef, { [e]: lessons[index] }, { merge: true });
+                      
                             await updateDoc(cityRef, {
                               [item]: deleteField()
                             });
-
+                      
                           }  
+                      
+                        }}
+                        value={classes[index]}/>
 
-                          arr[index] = e
-                          setReload(reload+1)}
-                        }
-                        value={arr[index]}/>
+            {/* delete button */}
 
-            <TouchableHighlight onPress={async() => {
+            <TouchableHighlight onPress={async () => {
 
-              arr.splice(index,1); 
+              // updating data on page
+              classes.splice(index,1); 
+              lessons.splice(index,1); 
+
+              // reloading flatlist
               setReload(reload+1);
 
-              let cityRef = doc(db, 'Li7', week2[week1.indexOf(param.day)]);
-      
+              // updating data at firebase
+              console.log(week_eng[week_ru.indexOf(param.day)])
+              let cityRef = doc(db, 'Li7', week_eng[week_ru.indexOf(param.day)]);
               await updateDoc(cityRef, {
                 [item]: deleteField()
               });
@@ -92,7 +162,15 @@ export default function App({ route, navigation }) {
               source={require('../../assets/del.png')}/>
             </TouchableHighlight>
 
-            <TouchableHighlight onPress={() => {navigation.navigate('DayEditor',{'param': param.param, 'day':week2[week1.indexOf(param.day)], 'class': item})}}>
+            {/* open button */}
+
+            <TouchableHighlight onPress={() => {
+              navigation.navigate('DayEditor',{
+                'param': param.param, 
+                'day':week_eng[week_ru.indexOf(param.day)], 
+                'class': item
+              })
+            }}>
               <Image style={styles.image}
               source={require('../../assets/open.png')}/>
             </TouchableHighlight>
@@ -100,11 +178,15 @@ export default function App({ route, navigation }) {
           </View>
 
         )}/>
+
       </View>
                   
-      <Text style={[styles.button2,{width: '25%',fontWeight: '700'}]} onPress={() => {arr.push(''); setReload(reload+1)}}>
+      {/* buttons */}
+
+      <Text style={[styles.button2,{width: '25%',fontWeight: '700'}]} onPress={() => {classes.push(''); setReload(reload+1)}}>
         Добавить класс
       </Text>
+
       <Text style={[styles.button2,{width: '25%',fontWeight: '700'}]} onPress={() => navigation.navigate('Week',param.param)}>
         Назад
       </Text>

@@ -157,8 +157,8 @@ export default StyleSheet.create({
 
     flexDirection: 'row',
 
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
 
     marginTop: '1%'
 
